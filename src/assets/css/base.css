@@ -1,0 +1,16 @@
+html,body {
+    height: 100%;
+    background-color: #fff;
+}
+body,h1,h2,h3,h4,h5,h6,div,span,p,a,li,ul,ol,input,button,i,b,strong,img {
+    margin: 0;
+    padding: 0;
+}
+a {
+    text-decoration: none;
+    color: #000;
+}
+li {
+    list-style: none;
+    
+}
