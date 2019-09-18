@@ -36,8 +36,8 @@
               </template>
               <el-menu-item index="/publish">发布文章</el-menu-item>
               <el-menu-item index="/article">内容列表</el-menu-item>
-              <el-menu-item index="2-3">评论列表</el-menu-item>
-              <el-menu-item index="2-4">素材管理</el-menu-item>
+              <el-menu-item index="/comments">评论列表</el-menu-item>
+              <el-menu-item index="/media">素材管理</el-menu-item>
             </el-submenu>
             <!-- 粉丝管理 -->
             <el-submenu index="3">
@@ -50,7 +50,7 @@
               <el-menu-item index="3-3">粉丝列表</el-menu-item>
             </el-submenu>
             <!-- 账户信息 -->
-            <el-menu-item index="4">
+            <el-menu-item index="/account">
               <i class="el-icon-setting"></i>
               <span slot="title">账户信息</span>
             </el-menu-item>
@@ -69,9 +69,11 @@
           <!-- 用户下拉菜单 -->
           <el-dropdown trigger="click" @command="handleCommand">
             <span class="el-dropdown-link">
-              <img class="userPic" :src="userInfo.photo" alt />
-              {{userInfo.name}}
-              <i class="el-icon-arrow-down el-icon--right"></i>
+              <img class="userPic" :src="$store.state.userInfo.photo" alt />
+              {{$store.state.userInfo.name}}
+              <i
+                class="el-icon-arrow-down el-icon--right"
+              ></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="info">个人信息</el-dropdown-item>
@@ -116,9 +118,13 @@ export default {
   },
   created() {
     // 获取用户信息填到对应位置
-    let userObj = JSON.parse(window.localStorage.getItem("userInfo"));
-    this.userInfo.photo = userObj.photo;
-    this.userInfo.name = userObj.name;
+    // let userObj = JSON.parse(window.localStorage.getItem("userInfo"));
+    // this.userInfo.photo = userObj.photo;
+    // this.userInfo.name = userObj.name;
+    this.$axios.get("/mp/v1_0/user/profile").then(data => {
+      this.form = data.data.data;
+      this.$store.commit("userSave", this.form);
+    });
   }
 };
 </script>

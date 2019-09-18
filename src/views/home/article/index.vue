@@ -15,7 +15,7 @@
         </el-form-item>
         <!-- 频道 -->
         <el-form-item label="频道">
-          <channel></channel>
+          <channel v-model="searchForm.channel_id"></channel>
         </el-form-item>
         <!-- 时间 -->
         <el-form-item label="时间">
@@ -58,9 +58,9 @@
         </template>
       </el-table-column>
       <el-table-column prop="pubdate" label="发布时间"></el-table-column>
-      <el-table-column prop="pubdate" label="操作">
+      <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini">修改</el-button>
+          <el-button type="primary" size="mini" @click="change(scope.row)">修改</el-button>
           <el-button type="danger" size="mini" @click="del(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -92,7 +92,8 @@ export default {
       total: 0,
       // 表格数据数组
       tableData: [],
-
+      // 文章频道数组
+      channelList: [],
       // 加载动画
       loading: false
     };
@@ -101,7 +102,11 @@ export default {
     channel
   },
   methods: {
-    // 删除
+    // 点击修改
+    change(row) {
+      this.$router.push(`/edit/${row.id}`);
+    },
+    // 点击删除
     del(id) {
       this.$confirm("你确定要删除这条内容吗?", "警告", {
         confirmButtonText: "删除",
@@ -109,13 +114,11 @@ export default {
         type: "warning"
       })
         .then(() => {
-          let token = JSON.parse(window.localStorage.getItem("userInfo")).token;
           this.$axios
-            .delete(`http://ttapi.research.itcast.cn/mp/v1_0/articles/${id}`, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            })
+            .delete(
+              `http://ttapi.research.itcast.cn/mp/v1_0/articles/${id}`,
+              {}
+            )
             .then(data => {
               this.$message.success("删除成功!");
             })
@@ -133,12 +136,8 @@ export default {
     // 加载数据的方法:
     loadData(page) {
       this.loading = true;
-      let token = JSON.parse(window.localStorage.getItem("userInfo")).token;
       this.$axios
         .get("http://ttapi.research.itcast.cn/mp/v1_0/articles", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
           params: {
             status:
               this.searchForm.radio == "" ? undefined : this.searchForm.radio,
@@ -158,7 +157,7 @@ export default {
           this.loading = false;
         })
         .catch(err => {
-          console.log(err);
+          window.console.log(err);
         });
     },
     // 筛选事件
