@@ -1,7 +1,7 @@
 <template>
   <div class="publish-wrap">
     <el-form ref="form" label-width="60px" :model="form" :rules="rules" class="demo-ruleForm">
-      <!-- 标题-未完 -->
+      <!-- 标题 -->
       <el-form-item label="标题" prop="title">
         <el-input placeholder="请输入标题" v-model="form.title"></el-input>
       </el-form-item>
@@ -9,14 +9,24 @@
       <el-form-item label="内容">
         <quillEditor :options="editorOption" v-model="form.content"></quillEditor>
       </el-form-item>
-      <!-- 封面-未完 -->
+      <!-- 封面 -->
       <el-form-item label="封面">
-        <el-radio :label="3">备选项</el-radio>
-        <el-radio :label="6">备选项</el-radio>
-        <el-radio :label="9">备选项</el-radio>
-        <el-radio :label="9">备选项</el-radio>
+        <el-radio-group v-model="form.cover.type">
+          <el-radio :label="1">单图</el-radio>
+          <el-radio :label="3">三图</el-radio>
+          <el-radio :label="0">无图</el-radio>
+          <el-radio :label="-1">自动</el-radio>
+        </el-radio-group>
+        <!-- 图开始 -->
+        <el-row v-if="form.cover.type > 0">
+          <el-col :span="6" v-for="(item, i) in form.cover.type" :key="i">
+            <!-- 组件 -->
+            <uploadimg @change="form.cover.images[i] = $event"></uploadimg>
+          </el-col>
+        </el-row>
+        <!-- 图结束 -->
       </el-form-item>
-      <!-- 频道-未完 -->
+      <!-- 频道 -->
       <el-form-item label="频道">
         <channel v-model="form.channel_id"></channel>
       </el-form-item>
@@ -39,11 +49,15 @@ import { quillEditor } from "vue-quill-editor";
 
 // 导入频道组件
 import channel from "@/components/channel/";
+// 导入素材上传组件
+import uploadimg from "./components/uploadimg.vue";
+
 export default {
   name: "publish",
   components: {
     quillEditor,
-    channel
+    channel,
+    uploadimg
   },
   data() {
     return {
@@ -57,7 +71,7 @@ export default {
         content: "",
         // 封面
         cover: {
-          type: 0,
+          type: 1,
           images: []
         }
       },
@@ -105,12 +119,7 @@ export default {
         // 修改进
         let id = this.$route.params.id;
         this.$axios
-          .put(`/mp/v1_0/articles/${id}`, {
-            title: this.form.title,
-            content: this.form.content,
-            cover: this.form.cover,
-            channel_id: this.form.channel_id
-          })
+          .put(`/mp/v1_0/articles/${id}`, this.form)
           .then(data => {
             if (data.status == 201) {
               this.$message.success("修改成功!");
@@ -142,6 +151,7 @@ export default {
     loadData() {
       let id = this.$route.params.id;
       this.$axios.get(`/mp/v1_0/articles/${id}`).then(data => {
+        console.log(data);
         this.form = data.data.data;
         this.oldForm = { ...this.form };
       });

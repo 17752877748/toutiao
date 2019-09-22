@@ -9,6 +9,7 @@ import publish from '../views/home/publish/'
 import comments from '../views/home/comments/'
 import account from '../views/home/account/'
 import media from '../views/home/media/'
+import overview from '../views/home/overview/'
 
 // 导入nprogress
 import NProgress from 'nprogress'
@@ -25,6 +26,7 @@ const router = new VueRouter({
                 { path: '/comments', component: comments },
                 { path: '/account', component: account },
                 { path: '/media', component: media },
+                { path: '/overview', component: overview },
                 { path: '/publish', component: publish },
                 { path: '/edit/:id', component: publish, name: 'edit' }
             ]

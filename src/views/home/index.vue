@@ -45,7 +45,7 @@
                 <i class="el-icon-food"></i>
                 <span>粉丝管理</span>
               </template>
-              <el-menu-item index="3-1">粉丝概况</el-menu-item>
+              <el-menu-item index="/overview">粉丝概况</el-menu-item>
               <el-menu-item index="3-2">粉丝画像</el-menu-item>
               <el-menu-item index="3-3">粉丝列表</el-menu-item>
             </el-submenu>
@@ -122,8 +122,9 @@ export default {
     // this.userInfo.photo = userObj.photo;
     // this.userInfo.name = userObj.name;
     this.$axios.get("/mp/v1_0/user/profile").then(data => {
-      this.form = data.data.data;
-      this.$store.commit("userSave", this.form);
+      this.userInfo = data.data.data;
+      // this.userInfo.token = userObj.token;
+      this.$store.commit("userSave", this.userInfo);
     });
   }
 };

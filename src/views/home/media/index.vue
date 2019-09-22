@@ -1,5 +1,5 @@
 <template>
-  <el-card class="box-card">
+  <el-card class="box-card" v-loading="loading">
     <div slot="header" class="clearfix">
       <el-radio-group v-model="menu" @change="changeMenu">
         <el-radio-button label="全部"></el-radio-button>
@@ -11,6 +11,7 @@
         action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
         :on-success="doSuccess"
         :show-file-list="false"
+        :headers="header"
         name="image"
       >
         <el-button size="small" type="primary">点击上传</el-button>
@@ -47,6 +48,7 @@
       layout="prev, pager, next"
       :page-size="12"
       :total="total"
+      :current-page="current"
       @current-change="goPage"
     ></el-pagination>
   </el-card>
@@ -57,19 +59,44 @@ export default {
   name: "media",
   data() {
     return {
+      // 加载中
+      loading: false,
       // 每页数据
       listData: [],
       // 切换
       menu: "全部",
+      // 当前页
+      current: 1,
       // 总数量
-      total: 0
+      total: 0,
+      // 请求头
+      header: {
+        Authorization: `Bearer ${
+          JSON.parse(window.localStorage.getItem("userInfo")).token
+        }`
+        // Authorization: `Bearer ${this.$store.state.userInfo.token}`
+      }
     };
+  },
+  computed: {
+    // header(){
+    // return {
+    //     // Authorization: `Bearer ${
+    //     //   JSON.parse(window.localStorage.getItem("userInfo")).token
+    //     // }`
+    //     Authorization: `Bearer ${this.$store.state.userInfo.token}`
+    //   }
+    // }
   },
   methods: {
     // 上传成功钩子
-    doSuccess() {},
+    doSuccess() {
+      this.loadData(1);
+      this.current = 1;
+    },
     // 素材数据请求
     loadData(page = 1) {
+      this.loading = true;
       this.$axios
         .get("/mp/v1_0/user/images", {
           params: {
@@ -81,6 +108,7 @@ export default {
         .then(data => {
           this.total = data.data.data.total_count;
           this.listData = data.data.data.results;
+          this.loading = false;
           //   console.log(data.data.data.results);
         });
     },
@@ -102,6 +130,7 @@ export default {
         })
         .then(data => {
           this.loadData();
+          this.current = 1;
         })
         .catch(err => {
           item.is_collected = !item.is_collected;
@@ -114,7 +143,7 @@ export default {
         .then(data => {
           if (data.status == 204) {
             this.$message.success("删除成功!");
-            this.loadData();
+            this.loadData(this.current);
           }
         })
         .catch(err => {
