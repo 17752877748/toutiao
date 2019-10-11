@@ -24,7 +24,7 @@
             :unique-opened="true"
           >
             <!-- 首页 -->
-            <el-menu-item index="/home">
+            <el-menu-item index="/homeSon">
               <i class="el-icon-menu"></i>
               <span slot="title">首页</span>
             </el-menu-item>
@@ -184,7 +184,7 @@ export default {
       }
       // main
       .my-main-main {
-        background-color: #fff;
+        background-color: #f2f3f5;
       }
     }
   }

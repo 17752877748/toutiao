@@ -10,6 +10,7 @@ import comments from '../views/home/comments/'
 import account from '../views/home/account/'
 import media from '../views/home/media/'
 import overview from '../views/home/overview/'
+import homeSon from '../views/home/homeSon/'
 
 // 导入nprogress
 import NProgress from 'nprogress'
@@ -22,6 +23,7 @@ const router = new VueRouter({
         { path: '/', redirect: '/login' },
         {
             path: '/home', component: home, children: [
+                { path: '/homeSon', component: homeSon },
                 { path: '/article', component: article },
                 { path: '/comments', component: comments },
                 { path: '/account', component: account },
